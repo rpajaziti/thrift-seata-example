@@ -121,7 +121,7 @@ On successful commit, Seata cleans up the `undo_log` entries asynchronously. On 
 
 ## Tech Stack
 
-- Java 17
+- Java 19
 - Spring Boot 2.7.18
 - Apache Thrift 0.16.0
 - Seata 1.7.1 (AT mode)
@@ -134,7 +134,7 @@ On successful commit, Seata cleans up the `undo_log` entries asynchronously. On 
 
 ### Prerequisites
 
-- Java 17
+- Java 19
 - Docker & Docker Compose
 - Gradle
 - Apache Thrift compiler — needed to generate Java code from `.thrift` files
