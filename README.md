@@ -119,6 +119,30 @@ CREATE TABLE IF NOT EXISTS undo_log (
 
 On successful commit, Seata cleans up the `undo_log` entries asynchronously. On rollback, it uses them to revert changes, then deletes them.
 
+## Known Issue: Manual Thrift Servlet Registration
+
+The Thrift server-side controllers (`WalletThriftController`, `InventoryThriftController`) are registered manually via `ThriftServerConfig` in each service instead of using the library's `@ThriftController` annotation.
+
+**Why:** The `thrift-spring-boot-starter` library (v2.0.1) creates controller instances via `BeanUtils.instantiateClass` — plain reflection with a no-arg constructor. This completely bypasses Spring's dependency injection, so any `@Autowired` fields or constructor parameters are ignored (null at runtime).
+
+**Affected files:**
+- `wallet-service/.../config/ThriftServerConfig.java`
+- `inventory-service/.../config/ThriftServerConfig.java`
+
+**Planned fix:** Fork `thrift-spring-boot-starter` and replace `BeanUtils.instantiateClass` with `ApplicationContext.getAutowireCapableBeanFactory().createBean()` in `ThriftControllerRegistrar`, so `@ThriftController` beans get full Spring DI support. Once fixed, the manual `ThriftServerConfig` classes can be removed and replaced with `@ThriftController` + `@EnableThriftController` again.
+
+## Known Issue: Manual Thrift Servlet Registration
+
+The Thrift server controllers (`WalletThriftController`, `InventoryThriftController`) are registered manually via `ThriftServerConfig` in each service instead of using the library's `@ThriftController` annotation. This is temporary.
+
+**Why:** The `thrift-spring-boot-starter` library (v2.0.1) creates controller instances via `BeanUtils.instantiateClass` — plain reflection with a no-arg constructor. This bypasses Spring's dependency injection entirely, leaving all injected fields null at runtime.
+
+**Affected files:**
+- `wallet-service/.../config/ThriftServerConfig.java`
+- `inventory-service/.../config/ThriftServerConfig.java`
+
+**Planned fix:** Fork [thrift-spring-boot-starter](https://github.com/jmkeyes/thrift-spring-boot-starter) and replace `BeanUtils.instantiateClass` with `ApplicationContext.getAutowireCapableBeanFactory().createBean()` in `ThriftControllerRegistrar`, enabling full Spring DI for `@ThriftController` beans. An alternative would be contributing the fix upstream via PR. Once resolved, the manual `ThriftServerConfig` classes can be replaced with `@ThriftController` + `@EnableThriftController`.
+
 ## Tech Stack
 
 - Java 21
