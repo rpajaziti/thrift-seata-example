@@ -2,7 +2,7 @@ package com.example.orderservice.thrift;
 
 import com.example.common.thrift.SeataThriftHttpClient;
 import com.example.thrift.wallet.TWalletService;
-import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TJSONProtocol;
 import org.apache.thrift.transport.TTransportException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +25,6 @@ public class WalletServiceThriftClient {
         SeataThriftHttpClient httpClient = new SeataThriftHttpClient(endpoint);
         httpClient.setConnectTimeout(connectionTimeout);
         httpClient.setReadTimeout(readTimeout);
-        return new TWalletService.Client(new TBinaryProtocol(httpClient));
+        return new TWalletService.Client(new TJSONProtocol(httpClient));
     }
 }

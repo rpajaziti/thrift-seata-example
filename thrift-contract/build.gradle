@@ -1,13 +1,14 @@
 plugins {
     id 'maven-publish'
-    id "org.jruyi.thrift" version "0.4.2"
 }
 
 group = 'com.example.thrift-contract'
 description = 'thrift-contract'
 
 dependencies {
-    implementation 'org.apache.thrift:libthrift:0.16.0'
+    implementation 'org.apache.thrift:libthrift:0.22.0'
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
+    implementation 'org.slf4j:slf4j-api:2.0.12'
 }
 
 publishing {
@@ -30,20 +31,30 @@ publishing {
 bootJar.enabled = false
 jar.enabled = true
 
-compileThrift {
-    thriftExecutable "thrift"
-    sourceDir "$projectDir/src/main/thrift"
-    outputDir "$buildDir/gen-src"
+def thriftSourceDir = file("$projectDir/src/main/thrift")
+def thriftOutputDir = file("${layout.buildDirectory.get()}/gen-src")
 
-    nowarn true
-    strict true
-    verbose true
-    recurse true
-    debug true
-    allowNegKeys true
-    allow64bitsConsts true
-    createGenFolder false
+tasks.register('compileThrift', Exec) {
+    inputs.dir thriftSourceDir
+    outputs.dir thriftOutputDir
 
-    generator 'java', 'private-members'
-    generator 'js'
+    doFirst {
+        thriftOutputDir.mkdirs()
+    }
+
+    commandLine 'bash', '-c', """
+        for f in ${thriftSourceDir}/*.thrift; do
+            thrift --gen java:private-members -out ${thriftOutputDir} \$f
+        done
+    """
 }
+
+sourceSets {
+    main {
+        java {
+            srcDir thriftOutputDir
+        }
+    }
+}
+
+compileJava.dependsOn compileThrift

@@ -121,20 +121,20 @@ On successful commit, Seata cleans up the `undo_log` entries asynchronously. On 
 
 ## Tech Stack
 
-- Java 19
-- Spring Boot 2.7.18
-- Apache Thrift 0.16.0
-- Seata 1.7.1 (AT mode)
+- Java 21
+- Spring Boot 3.2.5
+- Apache Thrift 0.22.0
+- Seata 2.0.0 (AT mode)
 - PostgreSQL 14
 - Flyway (database migrations)
-- SpringDoc OpenAPI (Swagger UI on gateway)
-- Gradle multi-module
+- SpringDoc OpenAPI 2 (Swagger UI on gateway)
+- Gradle 8.7 multi-module
 
 ## Getting Started
 
 ### Prerequisites
 
-- Java 19
+- Java 21
 - Docker & Docker Compose
 - Gradle
 - Apache Thrift compiler — needed to generate Java code from `.thrift` files
@@ -184,7 +184,7 @@ Start all four in separate terminals:
 | POST | `/api/wallets/top-up` | Add money to a user's wallet |
 | GET | `/api/products` | List all products |
 
-Swagger UI is available at `http://localhost:8081/swagger-ui.html`
+Swagger UI is available at `http://localhost:8081/swagger-ui/index.html`
 
 ### Top up a wallet
 

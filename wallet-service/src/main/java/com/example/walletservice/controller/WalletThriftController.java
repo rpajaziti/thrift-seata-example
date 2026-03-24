@@ -3,9 +3,7 @@ package com.example.walletservice.controller;
 import com.example.walletservice.service.WalletService;
 import com.example.thrift.wallet.TWalletService;
 import org.apache.thrift.TException;
-import ru.trylogic.spring.boot.thrift.annotation.ThriftController;
 
-@ThriftController("/api")
 public class WalletThriftController implements TWalletService.Iface {
 
     private final WalletService walletService;
