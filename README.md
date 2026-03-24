@@ -60,25 +60,30 @@ Everything is in one Gradle project as modules, but in a real setup these would 
 5. If anything fails at any point, Seata rolls back all three databases automatically
 
 ```
-  ✅ Success                                    ❌ Failure (simulateFail=true)
+  Success                                       Failure (simulateFail=true)
+  -------                                       ---------------------------
 
   POST /api/orders                              POST /api/orders?simulateFail=true
-       │                                             │
-       ▼                                             ▼
+       |                                             |
+       v                                             v
   @GlobalTransactional                          @GlobalTransactional
-       │                                             │
-       ├─→ order-service     ✅ saved                ├─→ order-service     ✅ saved
-       │     └─→ wallet      ✅ deducted             │     └─→ wallet      ✅ deducted
-       │                                             │
-       ├─→ inventory         ✅ decremented          ├─→ inventory         ✅ decremented
-       │                                             │
-       ▼                                             ▼
+       |                                             |
+       |-- order-service      [saved]                |-- order-service      [saved]
+       |     '-- wallet       [deducted]             |     '-- wallet       [deducted]
+       |                                             |
+       |-- inventory          [decremented]          |-- inventory          [decremented]
+       |                                             |
+       v                                             v
   COMMIT all                                    RuntimeException thrown!
-                                                     │
-                                                     ▼
-                                                ROLLBACK all ↩️
+                                                     |
+                                                     v
+                                                ROLLBACK all
                                                 (order, wallet, inventory)
 ```
+
+This works because the entire flow is **synchronous** — every call blocks until it gets a response. By the time `@GlobalTransactional` method returns, all services have done their work and registered with Seata. So Seata knows exactly when to commit or rollback.
+
+This would **not** work with async communication (like Kafka events), because the consumer might not have processed the message yet when the method returns. For that you'd need a different pattern (Saga, transactional outbox, etc.).
 
 ## XID Propagation — how Seata knows it's the same transaction
 
