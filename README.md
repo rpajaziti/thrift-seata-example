@@ -150,6 +150,10 @@ curl -X POST http://localhost:8081/api/wallets/top-up \
 - Java 11+
 - Docker & Docker Compose
 - Gradle
+- Apache Thrift compiler — needed to generate Java code from `.thrift` files
+  - **Mac:** `brew install thrift`
+  - **Linux:** `apt install thrift-compiler`
+  - **Windows:** download the [thrift.exe](https://thrift.apache.org/download) and add it to your PATH
 
 ### 1. Start PostgreSQL and Seata Server
 
@@ -159,13 +163,21 @@ docker compose up -d
 
 This starts PostgreSQL (port 5440) with three databases (`db_orders`, `db_wallet`, `db_inventory`) and the Seata server (port 8088).
 
-### 2. Build the project
+### 2. Generate Thrift code and publish locally
+
+```bash
+./gradlew :thrift-contract:publishToMavenLocal
+```
+
+This generates Java classes from the `.thrift` files and publishes them to your local Maven repo so the other modules can depend on them.
+
+### 3. Build the project
 
 ```bash
 ./gradlew build
 ```
 
-### 3. Run the services
+### 4. Run the services
 
 Start all four in separate terminals:
 
@@ -176,7 +188,7 @@ Start all four in separate terminals:
 ./gradlew :gateway:bootRun
 ```
 
-### 4. Try it out
+### 5. Try it out
 
 ```bash
 # Top up a wallet first
