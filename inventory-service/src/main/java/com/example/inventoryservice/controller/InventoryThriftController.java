@@ -1,6 +1,9 @@
 package com.example.inventoryservice.controller;
 
+import com.example.common.exception.InsufficientStockException;
+import com.example.common.exception.ResourceNotFoundException;
 import com.example.inventoryservice.service.InventoryService;
+import com.example.thrift.inventory.TInventoryException;
 import com.example.thrift.inventory.TInventoryService;
 import com.example.thrift.inventory.TProduct;
 import org.apache.thrift.TException;
@@ -16,20 +19,18 @@ public class InventoryThriftController implements TInventoryService.Iface {
     }
 
     @Override
-    public void decrementStock(long productId, int quantity) throws TException {
+    public void decrementStock(long productId, int quantity) throws TInventoryException, TException {
         try {
             inventoryService.decrementStock(productId, quantity);
-        } catch (RuntimeException e) {
-            throw new TException(e.getMessage(), e);
+        } catch (ResourceNotFoundException e) {
+            throw new TInventoryException(404, e.getMessage());
+        } catch (InsufficientStockException e) {
+            throw new TInventoryException(409, e.getMessage());
         }
     }
 
     @Override
     public List<TProduct> listProducts() throws TException {
-        try {
-            return inventoryService.listProducts();
-        } catch (RuntimeException e) {
-            throw new TException(e.getMessage(), e);
-        }
+        return inventoryService.listProducts();
     }
 }

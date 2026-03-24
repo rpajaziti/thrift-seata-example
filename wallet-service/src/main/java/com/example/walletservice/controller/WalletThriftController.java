@@ -1,6 +1,9 @@
 package com.example.walletservice.controller;
 
+import com.example.common.exception.InsufficientBalanceException;
+import com.example.common.exception.ResourceNotFoundException;
 import com.example.walletservice.service.WalletService;
+import com.example.thrift.wallet.TWalletException;
 import com.example.thrift.wallet.TWalletService;
 import org.apache.thrift.TException;
 
@@ -13,20 +16,22 @@ public class WalletThriftController implements TWalletService.Iface {
     }
 
     @Override
-    public void deductBalance(String userId, int amount) throws TException {
+    public void deductBalance(String userId, int amount) throws TWalletException, TException {
         try {
             walletService.deductBalance(userId, amount);
-        } catch (RuntimeException e) {
-            throw new TException(e.getMessage(), e);
+        } catch (ResourceNotFoundException e) {
+            throw new TWalletException(404, e.getMessage());
+        } catch (InsufficientBalanceException e) {
+            throw new TWalletException(409, e.getMessage());
         }
     }
 
     @Override
-    public void topUp(String userId, int amount) throws TException {
+    public void topUp(String userId, int amount) throws TWalletException, TException {
         try {
             walletService.topUp(userId, amount);
         } catch (RuntimeException e) {
-            throw new TException(e.getMessage(), e);
+            throw new TWalletException(500, e.getMessage());
         }
     }
 }
