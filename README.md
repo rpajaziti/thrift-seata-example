@@ -134,10 +134,10 @@ curl -X POST http://localhost:8081/api/wallets/top-up \
 
 ## Tech Stack
 
-- Java 11
+- Java 17
 - Spring Boot 2.7.18
 - Apache Thrift 0.16.0
-- Seata 1.4.2 (AT mode)
+- Seata 1.7.1 (AT mode)
 - PostgreSQL 14
 - Flyway (database migrations)
 - SpringDoc OpenAPI (Swagger UI on gateway)
@@ -147,7 +147,7 @@ curl -X POST http://localhost:8081/api/wallets/top-up \
 
 ### Prerequisites
 
-- Java 11+
+- Java 17+
 - Docker & Docker Compose
 - Gradle
 - Apache Thrift compiler — needed to generate Java code from `.thrift` files

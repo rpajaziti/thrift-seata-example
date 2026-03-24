@@ -1,5 +1,6 @@
 package com.example.gateway.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -52,6 +53,7 @@ public class OrderRequest {
         this.unitPrice = unitPrice;
     }
 
+    @JsonIgnore
     public int getTotalAmount() {
         return quantity * unitPrice;
     }

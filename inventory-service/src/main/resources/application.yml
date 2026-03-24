@@ -22,7 +22,7 @@ seata:
   application-id: inventory-service
   tx-service-group: demo-test
   service:
-    vgroup-mapping:
+    vgroupMapping:
       demo-test: default
     grouplist:
       default: 127.0.0.1:8088

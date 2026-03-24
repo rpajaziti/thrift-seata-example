@@ -12,14 +12,15 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   seata-server:
-    image: seataio/seata-server:1.4.2
+    image: seataio/seata-server:1.7.1
     platform: linux/amd64
     container_name: thrift-seata-server
     ports:
       - "8088:8088"
+      - "7091:7091"
     environment:
       - STORE_MODE=file
-    command: ["--port", "8088"]
+      - SEATA_PORT=8088
 
 volumes:
   postgres_data:
