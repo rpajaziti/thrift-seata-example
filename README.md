@@ -119,43 +119,6 @@ CREATE TABLE IF NOT EXISTS undo_log (
 
 On successful commit, Seata cleans up the `undo_log` entries asynchronously. On rollback, it uses them to revert changes, then deletes them.
 
-## API Endpoints (Gateway :8081)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/orders` | Place an order (creates order + charges wallet + decrements stock) |
-| GET | `/api/orders` | List all orders |
-| POST | `/api/wallets/top-up` | Add money to a user's wallet |
-| GET | `/api/products` | List all products |
-
-Swagger UI is available at `http://localhost:8081/swagger-ui.html`
-
-### Example: place an order
-
-```bash
-curl -X POST http://localhost:8081/api/orders \
-  -H "Content-Type: application/json" \
-  -d '{"userId": "user1", "productId": 1, "quantity": 2, "unitPrice": 500}'
-```
-
-### Example: simulate a failure (to see Seata rollback)
-
-```bash
-curl -X POST "http://localhost:8081/api/orders?simulateFail=true" \
-  -H "Content-Type: application/json" \
-  -d '{"userId": "user1", "productId": 1, "quantity": 2, "unitPrice": 500}'
-```
-
-All three operations (order, wallet, inventory) will go through, then the simulated failure triggers Seata to roll back everything.
-
-### Example: top up a wallet
-
-```bash
-curl -X POST http://localhost:8081/api/wallets/top-up \
-  -H "Content-Type: application/json" \
-  -d '{"userId": "user1", "amount": 5000}'
-```
-
 ## Tech Stack
 
 - Java 17
@@ -231,6 +194,45 @@ curl -X POST http://localhost:8081/api/orders \
 # Check orders
 curl http://localhost:8081/api/orders
 ```
+
+## API Endpoints (Gateway :8081)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/orders` | Place an order (creates order + charges wallet + decrements stock) |
+| GET | `/api/orders` | List all orders |
+| POST | `/api/wallets/top-up` | Add money to a user's wallet |
+| GET | `/api/products` | List all products |
+
+Swagger UI is available at `http://localhost:8081/swagger-ui.html`
+
+### Example: top up a wallet
+
+Top up a wallet first — placing an order will fail if the user has no wallet with sufficient balance.
+
+```bash
+curl -X POST http://localhost:8081/api/wallets/top-up \
+  -H "Content-Type: application/json" \
+  -d '{"userId": "user1", "amount": 5000}'
+```
+
+### Example: place an order
+
+```bash
+curl -X POST http://localhost:8081/api/orders \
+  -H "Content-Type: application/json" \
+  -d '{"userId": "user1", "productId": 1, "quantity": 2, "unitPrice": 500}'
+```
+
+### Example: simulate a failure (to see Seata rollback)
+
+```bash
+curl -X POST "http://localhost:8081/api/orders?simulateFail=true" \
+  -H "Content-Type: application/json" \
+  -d '{"userId": "user1", "productId": 1, "quantity": 2, "unitPrice": 500}'
+```
+
+All three operations (order, wallet, inventory) will go through, then the simulated failure triggers Seata to roll back everything.
 
 ## Project Structure
 
