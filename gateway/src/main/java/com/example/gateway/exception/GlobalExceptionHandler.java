@@ -85,12 +85,11 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-    @SuppressWarnings("unchecked")
     private <T extends Throwable> T findCause(Throwable ex, Class<T> type) {
         Throwable cause = ex;
         while (cause != null) {
             if (type.isInstance(cause)) {
-                return (T) cause;
+                return type.cast(cause);
             }
             cause = cause.getCause();
         }
