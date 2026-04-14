@@ -1,5 +1,7 @@
 # Seata + Thrift E-Commerce Demo
 
+> Distributed transactions across Spring Boot microservices — Apache Thrift RPC + REST gateway with Seata AT mode
+
 A simple e-commerce example showing how distributed transactions work across multiple services using **Seata** and **Apache Thrift**.
 
 When a user places an order, three things must happen atomically — an order is saved, inventory is decremented, and the wallet is charged — each in a different service with a different database. If any step fails, everything rolls back. That's what Seata does.

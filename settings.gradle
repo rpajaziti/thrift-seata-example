@@ -1,4 +1,4 @@
-rootProject.name = 'thrift-seata-example'
+rootProject.name = 'microservices-transactional-example'
 
 include 'common'
 include 'thrift-contract'
